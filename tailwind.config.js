@@ -10,7 +10,11 @@ export default {
     "./nuxt.config.{js,ts}"
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        madimi: ["Mukta", "sans-serif"],
+      },
+    },
   },
   plugins: [],
 }

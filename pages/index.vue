@@ -9,6 +9,13 @@
       Click me for API request
     </button>
     <Alert></Alert>
+    <!-- Cards for destinations -->
+    <div class="grid grid-cols-3 gap-4 mt-4">
+      <div v-for="destination in destinations" :key="destination.location_id" class="bg-white rounded-lg shadow-md p-4">
+        <p>ID: {{ destination.location_id }}</p>
+        <p>Name: {{ destination.name }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -25,7 +32,9 @@ const options = {
 };
 fetch(url, options)
   .then(res => res.json())
-  .then(json => console.log(json))
+  .then(json => {
+    const destinations = json; // Store the result in destinations variable
+    console.log(destinations); // Log the destinations variable
+  })
   .catch(err => console.error('error:' + err));
 </script>
-

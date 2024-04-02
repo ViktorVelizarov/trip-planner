@@ -1,7 +1,10 @@
 <template>
   <div>
-    <h1 class="text-5xl font-bold mt-16">I'm ready for an adventure in...</h1>
-    <input type="text" v-model="destination" @input="searchDestination" placeholder="Enter destination">
+    <h1 class="text-5xl font-bold mt-16 ml-16">I'm ready for an adventure in...</h1>
+    <div class="relative ml-16 mt-7">
+  <input type="text" v-model="destination" @input="searchDestination" placeholder="Enter destination"
+    class="bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-full py-2 px-4 w-64 sm:w-80 border border-gray-300 placeholder-gray-400">
+</div>
     <!-- Cards for locations -->
     <div class="mt-4">
       <div v-for="location in locations" :key="location.id" class="bg-white rounded-lg shadow-md p-4 mb-4 flex">

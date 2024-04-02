@@ -42,7 +42,7 @@ export default {
       try {
         const response = await fetch(`/api/GetLocations/${this.destination}`);
         const data = await response.json();
-        this.locations = data.data || []; // Set the fetched locations to the data property
+        this.locations = data.data.slice(1) || []; // Set the fetched locations to the data property
 
         // Fetch thumbnail URLs for each location
         for (const location of this.locations) {

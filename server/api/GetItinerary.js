@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer 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`
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo-instruct",

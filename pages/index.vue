@@ -35,7 +35,7 @@ export default {
     };
   },
   async mounted() {
-    await this.fetchLocations();
+    //await this.fetchLocations();
   },
   methods: {
     async fetchLocations() {
@@ -88,7 +88,7 @@ export default {
     },
     async searchDestination() {
       this.loading = true;
-      await this.fetchLocations();
+      //await this.fetchLocations();
     }
   },
 };

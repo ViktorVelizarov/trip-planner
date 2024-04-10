@@ -1,6 +1,6 @@
 export default defineEventHandler(async (event) => {
     const { locationid } = event.context.params;
-    const url = `https://api.content.tripadvisor.com/api/v1/location/${locationid}/details?key=33CC974010DE44B792B1EC3423F05573&language=en&currency=USD`;
+    const url = `https://api.content.tripadvisor.com/api/v1/location/${locationid}/details?key=${process.env.TRIPADVISOR_API_KEY}&language=en&currency=USD`;
     const options = {
       method: 'GET',
       headers: {

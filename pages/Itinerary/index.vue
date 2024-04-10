@@ -14,6 +14,10 @@
     <div v-else>
       <p>Loading...</p>
     </div>
+    <!-- "More activities" button -->
+    <button @click="redirectToSearch" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+      More activities
+    </button>
   </div>
 </template>
 
@@ -23,9 +27,6 @@ export default {
     return {
       itinerary: null
     };
-  },
-  mounted() {
-    this.fetchItinerary();
   },
   computed: {
     days() {
@@ -46,7 +47,14 @@ export default {
         console.error('Error:', error.message);
         // Handle error
       }
+    },
+    redirectToSearch() {
+      // Redirect to searchLocations page with destination set to current destination
+      this.$router.push({ path: '/searchLocations', query: { destination: this.destination } });
     }
+  },
+  mounted() {
+    this.fetchItinerary();
   }
 };
 </script>

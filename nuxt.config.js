@@ -4,9 +4,6 @@ export default defineNuxtConfig({
   '@nuxtjs/google-fonts',  '@nuxtjs/tailwindcss', 'shadcn-nuxt', 
 ],
 shadcn: {
-  /**
-   * Prefix for all the imported component
-   */
   prefix: '',
   /**
    * Directory that the component lives in.

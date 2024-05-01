@@ -34,13 +34,16 @@ export default {
     },
     destination() {
       return this.$route.query.destination;
+    },
+    selectedPreferences() {
+      return this.$route.query.selectedPreferences; // Add computed property for selectedPreferences
     }
   },
   methods: {
     async fetchItinerary() {
       try {
-        const { days, destination } = this.$route.query;
-        const response = await fetch(`http://localhost:3000/api/GetItinerary?days=${days}&destination=${destination}`);
+        const { days, destination, selectedPreferences } = this.$route.query; // Include selectedPreferences in the query
+        const response = await fetch(`http://localhost:3000/api/GetItinerary?days=${days}&destination=${destination}&selectedPreferences=${selectedPreferences}`);
         const result = await response.text();
         this.itinerary = result.split(/Day \d+:/).filter(str => str.trim() !== '').map(day => day.trim().split('\n'));
       } catch (error) {
@@ -58,6 +61,7 @@ export default {
   }
 };
 </script>
+
 
 <style>
 /* No need for empty-day styling as it's not used in this version */

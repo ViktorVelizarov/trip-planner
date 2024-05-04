@@ -7,10 +7,10 @@ export default defineEventHandler(async (event) => {
       const preferencesArray = query.selectedPreferences.split(',');
       const preferencesText = preferencesArray.join(', ');
       promptText += preferencesText;
-      promptText += '. Also at the end of each day give me the longitude and latitude coordinates foe each destination of the day.';
+      promptText += '. Also at the end of each day can you provide the provide the coordinates (longtitude, langtitude) for each destination. Put the cooridnates in [] and separate them by ,';
     } else {
-      promptText += 'No specific preferences.';
-      promptText += '. Also at the end of each day give me the longitude and latitude coordinates foe each destination of the day.';
+      promptText += 'No specific preferences';
+      promptText += '. Also at the end of each day can you provide the provide the coordinates (longtitude, langtitude) for each destination. Put the cooridnates in [] and separate them by ,';
     }
     console.log(promptText);
 
@@ -34,6 +34,7 @@ export default defineEventHandler(async (event) => {
 
     const data = await response.json();
     const result = data.choices[0].text.trim();
+    console.log( result)
     return result
   } catch (error) {
     console.error('Error:', error.message);

@@ -7,10 +7,10 @@ export default defineEventHandler(async (event) => {
       const preferencesArray = query.selectedPreferences.split(',');
       const preferencesText = preferencesArray.join(', ');
       promptText += preferencesText;
-      promptText += '. Also at the end of each day can you provide the provide the coordinates (longtitude, langtitude) for each destination. Put the cooridnates in [] and separate them by ,';
+      promptText += '. Also at the end of each day can you provide the provide the coordinates [longtitude FIRST,then latitude] for each destination, example: Eiffel Tower [2.2945, 48.8584]. Put the cooridnates in [] and separate them by ,';
     } else {
       promptText += 'No specific preferences';
-      promptText += '. Also at the end of each day can you provide the provide the coordinates (longtitude, langtitude) for each destination. Put the cooridnates in [] and separate them by ,';
+      promptText += '. Also at the end of each day can you provide the provide the coordinates [longtitude FIRST,then latitude] for each destination, example: Eiffel Tower [2.2945, 48.8584]. Put the cooridnates in [] and separate them by ,';
     }
     console.log(promptText);
 

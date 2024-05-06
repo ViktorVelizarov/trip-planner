@@ -9,16 +9,30 @@ import mapboxgl from 'mapbox-gl';
 import '../node_modules/mapbox-gl/dist/mapbox-gl.css';
 
 export default {
+  props: {
+    coordinatesArray: {
+      type: Array,
+      required: true
+    }
+  },
+  data() {
+    return {
+      uniqueId: Math.random().toString(36).substring(7), // Generate unique ID for map container
+      map: null
+    };
+  },
+
+
   mounted() {
     mapboxgl.accessToken = 'pk.eyJ1IjoidmlrdG9ydmVsIiwiYSI6ImNsdmk1aDV5djFjbGMyanFmODNkbG53ZHMifQ.X1lqvNcIbVceNnL6xJAnXA';
     const map = new mapboxgl.Map({
-      container: 'map',
+      container: 'map',  //+ this.uniqueId,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: [2.3488,48.8530], // starting position
+      center: this.coordinatesArray[0], // Set center as the first coordinate
       zoom: 12
-      
     });
-    const start = [2.3488,48.8530];
+
+    const start = this.coordinatesArray[0];
 
     // function to add markers
     function addMarkers(coordinates) {
@@ -84,7 +98,8 @@ export default {
     map.on('load', () => {
       // make an initial directions request that
       // starts and ends at the same location
-      getRoute([[2.3364,48.8606], [2.3011,48.8738], [2.3602,48.8585], [2.1227,48.8047], [2.3693,48.8689]]);
+      getRoute(this.coordinatesArray.slice(0));
+
 
       // Add starting point to the map
       map.addLayer({
@@ -100,7 +115,7 @@ export default {
                 properties: {},
                 geometry: {
                   type: 'Point',
-                  coordinates: start
+                  coordinates: start // Set starting point as the first coordinate
                 }
               }
             ]

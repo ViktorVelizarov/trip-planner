@@ -1,7 +1,7 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div class="container mx-auto px-4 py-8 max-w-md">
     <h1 class="text-2xl font-semibold mb-4">Submit Itinerary Details</h1>
-    <form @submit.prevent="handleSubmit" class="max-w-md mx-auto">
+    <form @submit.prevent="handleSubmit" class="max-w-md ">
       <div class="mb-4">
         <label for="days" class="block text-sm font-medium text-gray-700 mb-3">Date (max 10 days):</label>
         <DatePicker @update:selectedDateRange="updateSelectedDateRange"></DatePicker>

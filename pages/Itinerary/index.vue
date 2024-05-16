@@ -1,7 +1,7 @@
 <template>
   <div class=" px-4 py-8 flex flex-row">
 
-    <div class="">
+    <div class="w-1/2">
     <h1 class="text-2xl font-semibold mb-4">{{ `${days} days vacation in ${destination}` }}</h1>
     <div v-if="itinerary">
       <ul class="mt-8">

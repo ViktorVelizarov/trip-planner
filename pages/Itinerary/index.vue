@@ -1,5 +1,7 @@
 <template>
-  <div class="container mx-auto px-4 py-8">
+  <div class=" px-4 py-8 flex flex-row">
+
+    <div class="">
     <h1 class="text-2xl font-semibold mb-4">{{ `${days} days vacation in ${destination}` }}</h1>
     <div v-if="itinerary">
       <ul class="mt-8">
@@ -18,8 +20,10 @@
     <button @click="redirectToSearch" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
       More activities
     </button>
+  </div>
+
     <!-- Conditional rendering of MapWithMarkers component -->
-    <div v-if="showMapComponent">
+    <div v-if="showMapComponent" >
       <MapWithMarkers :coordinatesArray="selectedDayCoordinates" />
     </div>
   </div>
@@ -31,14 +35,6 @@ import MapWithMarkers from '@/components/MapWithMarkers.vue';
 export default {
   data() {
     return {
-      coordinatesArray: [
-        [2.3352, 48.8606],
-        [2.3348, 48.8622],
-        [2.3279, 48.86],
-        [2.3522, 48.8606],
-        [2.3509, 48.8529]
-      ],
-
       itinerary: null,
       selectedDayIndex: null,
       showMapComponent: false
@@ -91,10 +87,26 @@ export default {
       this.$router.push({ path: '/searchLocations', query: { destination: this.destination } });
     },
     showMap(index) {
-      this.selectedDayIndex = index;
-      this.showMapComponent = true;
+  if (this.selectedDayIndex === index) {
+    // Toggle showMapComponent only if clicking on the same day
+    this.showMapComponent = !this.showMapComponent;
+  } else {
+    // Close the current map if clicking on a different day
+    this.hideMap();
+    // Open the map for the newly clicked day
+    this.selectedDayIndex = index;
+    this.showMapComponent = true;
+  }
+},
+    hideMap() {
+    this.showMapComponent = false;
     }
   },
+  watch: {
+  selectedDayIndex(newValue, oldValue) {
+    if (newValue !== oldValue) {
+      this.hideMap();
+    } }},
   mounted() {
     this.fetchItinerary();
   }

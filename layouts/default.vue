@@ -7,7 +7,7 @@
     </div>   
     </nav>
 
-   <div class="flex w-full max-w-[500px] mx-auto h-screen">
+   <div class="flex w-full max-w-[500px] h-screen">
        <slot />
    </div>
 </template>

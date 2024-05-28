@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="map"></div>
+    <div :id="uniqueId" class="map-container"></div>
   </div>
 </template>
 
@@ -17,16 +17,14 @@ export default {
   },
   data() {
     return {
-      uniqueId: Math.random().toString(36).substring(7), // Generate unique ID for map container
+      uniqueId: 'map-' + Math.random().toString(36).substring(7), // Generate unique ID for map container
       map: null
     };
   },
-
-
   mounted() {
     mapboxgl.accessToken = 'pk.eyJ1IjoidmlrdG9ydmVsIiwiYSI6ImNsdmk1aDV5djFjbGMyanFmODNkbG53ZHMifQ.X1lqvNcIbVceNnL6xJAnXA';
-    const map = new mapboxgl.Map({  //create a map object from the Mapbox API
-      container: 'map',  
+    const map = new mapboxgl.Map({
+      container: this.uniqueId,  
       style: 'mapbox://styles/mapbox/streets-v12',
       center: this.coordinatesArray[0], // Set center as the first coordinate
       zoom: 12
@@ -35,19 +33,22 @@ export default {
     const start = this.coordinatesArray[0];
 
     // function to add markers
-    function addMarkers(coordinates) {
-      coordinates.forEach(coord => {
-        new mapboxgl.Marker()
+    const addMarkers = (coordinates) => {
+      coordinates.forEach((coord, index) => {
+        const el = document.createElement('div');
+        el.className = 'marker';
+        el.innerHTML = `<span>${index + 1}</span>`;
+        
+        new mapboxgl.Marker(el)
           .setLngLat(coord)
           .addTo(map)
           .setPopup(new mapboxgl.Popup().setHTML(`<h3>${coord[0]}, ${coord[1]}</h3>`));
       });
-    }
+    };
 
-    async function getRoute(ends) {
+    const getRoute = async (ends) => {
       let routeCoordinates = [];
       for (const end of ends) {
-        // make a directions request using cycling profile
         const query = await fetch(
           `https://api.mapbox.com/directions/v5/mapbox/cycling/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
           { method: 'GET' }
@@ -56,7 +57,6 @@ export default {
         const data = json.routes[0];
         routeCoordinates.push(...data.geometry.coordinates);
       }
-      // Add markers after route coordinates are obtained
       addMarkers(ends);
 
       const geojson = {
@@ -67,12 +67,10 @@ export default {
           coordinates: routeCoordinates
         }
       };
-      // if the route already exists on the map, we'll reset it using setData
+
       if (map.getSource('route')) {
         map.getSource('route').setData(geojson);
-      }
-      // otherwise, we'll make a new request
-      else {
+      } else {
         map.addLayer({
           id: 'route',
           type: 'line',
@@ -91,14 +89,11 @@ export default {
           }
         });
       }
-      // add turn instructions here at the end
-    }
+    };
 
     map.on('load', () => {
       getRoute(this.coordinatesArray.slice(0));
 
-
-      // Add starting point to the map
       map.addLayer({
         id: 'point',
         type: 'circle',
@@ -112,7 +107,7 @@ export default {
                 properties: {},
                 geometry: {
                   type: 'Point',
-                  coordinates: start // Set starting point as the first coordinate
+                  coordinates: start
                 }
               }
             ]
@@ -129,15 +124,29 @@ export default {
 </script>
 
 <style>
-  body {
-    margin: 0;
-    padding: 0;
-  }
+body {
+  margin: 0;
+  padding: 0;
+}
 
-  #map {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-  }
+.map-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.marker {
+  background-color: orange;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
 </style>

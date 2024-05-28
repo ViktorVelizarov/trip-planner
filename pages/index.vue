@@ -4,7 +4,7 @@
     <p class="text-xl md:text-2xl mb-6">
       Build, personalize, and optimize your itineraries with our free AI trip planner. Designed for vacations, workations, and everyday adventures.
     </p>
-    <button class="bg-green-500 text-white py-3 px-6 text-lg md:text-xl rounded mb-6">
+    <button @click="goToVacationForm" class="bg-green-500 text-white py-3 px-6 text-lg md:text-xl rounded mb-6">
       Create a new trip
     </button>
     <img 
@@ -36,7 +36,12 @@
 
 <script>
 export default {
-  name: 'Index'
+  name: 'Index',
+  methods: {
+    goToVacationForm() {
+      this.$router.push('/vacationForm');
+    }
+  }
 }
 </script>
 

@@ -25,8 +25,8 @@ export default {
 
   mounted() {
     mapboxgl.accessToken = 'pk.eyJ1IjoidmlrdG9ydmVsIiwiYSI6ImNsdmk1aDV5djFjbGMyanFmODNkbG53ZHMifQ.X1lqvNcIbVceNnL6xJAnXA';
-    const map = new mapboxgl.Map({
-      container: 'map',  //+ this.uniqueId,
+    const map = new mapboxgl.Map({  //create a map object from the Mapbox API
+      container: 'map',  
       style: 'mapbox://styles/mapbox/streets-v12',
       center: this.coordinatesArray[0], // Set center as the first coordinate
       zoom: 12
@@ -44,7 +44,6 @@ export default {
       });
     }
 
-    // create a function to make a directions request
     async function getRoute(ends) {
       let routeCoordinates = [];
       for (const end of ends) {
@@ -96,8 +95,6 @@ export default {
     }
 
     map.on('load', () => {
-      // make an initial directions request that
-      // starts and ends at the same location
       getRoute(this.coordinatesArray.slice(0));
 
 

@@ -1,6 +1,6 @@
 <template>
-  <div class="px-4 py-8 flex flex-row">
-    <div class="w-1/2">
+  <div class="vacation-itinerary-container">
+    <div class="left-section">
       <h1 class="text-2xl font-semibold mb-4">{{ `${days} days vacation in ${destination}` }}</h1>
       <div v-if="itinerary">
         <ul class="mt-8">
@@ -15,15 +15,22 @@
       <div v-else>
         <p>Loading...</p>
       </div>
-      <!-- "More activities" button -->
       <button @click="redirectToSearch" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
         More activities
       </button>
     </div>
 
-    <!-- Conditional rendering of MapWithMarkers component -->
-    <div v-if="showMapComponent">
-      <MapWithMarkers :coordinatesArray="selectedDayCoordinates" :destinationNames="selectedDayNames" />
+    <div class="right-section">
+      <MapWithMarkers
+        v-if="showMapComponent && itinerary"
+        :coordinates-array="selectedDayCoordinates"
+        :destination-names="selectedDayNames"
+      />
+      <MapWithMarkersAllDays
+        v-else-if="itinerary"
+        :coordinates-array="allDaysCoordinates"
+        :destination-names="allDaysNames"
+      />
     </div>
   </div>
 </template>
@@ -45,13 +52,19 @@ export default {
       return this.$route.query.destination;
     },
     selectedPreferences() {
-      return this.$route.query.selectedPreferences; // Add computed property for selectedPreferences
+      return this.$route.query.selectedPreferences;
     },
     selectedDayCoordinates() {
       return this.itinerary && this.selectedDayIndex !== null ? this.itinerary[this.selectedDayIndex].coordinates : [];
     },
     selectedDayNames() {
       return this.itinerary && this.selectedDayIndex !== null ? this.itinerary[this.selectedDayIndex].names : [];
+    },
+    allDaysCoordinates() {
+      return this.itinerary ? this.itinerary.map(day => day.coordinates) : [];
+    },
+    allDaysNames() {
+      return this.itinerary ? this.itinerary.map(day => day.names) : [];
     }
   },
   methods: {
@@ -88,21 +101,16 @@ export default {
         });
       } catch (error) {
         console.error('Error:', error.message);
-        // Handle error
       }
     },
     redirectToSearch() {
-      // Redirect to searchLocations page with destination set to current destination
       this.$router.push({ path: '/searchLocations', query: { destination: this.destination } });
     },
     showMap(index) {
       if (this.selectedDayIndex === index) {
-        // Toggle showMapComponent only if clicking on the same day
         this.showMapComponent = !this.showMapComponent;
       } else {
-        // Close the current map if clicking on a different day
         this.hideMap();
-        // Open the map for the newly clicked day
         this.selectedDayIndex = index;
         this.showMapComponent = true;
       }
@@ -124,21 +132,37 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 body {
   margin: 0;
   padding: 0;
 }
 
-.map-container {
-  position: absolute;
+.vacation-itinerary-container {
+  display: flex;
+  height: 100vh;
+}
+
+.left-section {
+  width: 50%;
+  padding-right: 20px;
+  overflow-y: auto;
+}
+
+.right-section {
+  width: 50%;
+  position: fixed;
   top: 0;
-  bottom: 0;
+  right: 0;
+  height: 100vh;
+}
+
+.map-container {
+  height: 100%;
   width: 100%;
 }
 
 .marker {
-  background-color: orange;
   border-radius: 50%;
   width: 30px;
   height: 30px;

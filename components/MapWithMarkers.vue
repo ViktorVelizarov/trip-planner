@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div :id="uniqueId" class="map-container"></div>
+  <div class="map-container">
+    <div :id="uniqueId" class="map"></div>
   </div>
 </template>
 
@@ -26,18 +26,22 @@ export default {
     };
   },
   mounted() {
+    console.log("coordinates:")
+    console.log(this.coordinatesArray)
     mapboxgl.accessToken = 'pk.eyJ1IjoidmlrdG9ydmVsIiwiYSI6ImNsdmk1aDV5djFjbGMyanFmODNkbG53ZHMifQ.X1lqvNcIbVceNnL6xJAnXA';
     const map = new mapboxgl.Map({
       container: this.uniqueId,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: this.coordinatesArray[0], // Set center as the first coordinate
-      zoom: 12
+      center: this.coordinatesArray[1], // Set center as the first coordinate
+      zoom: 13
     });
 
     const start = this.coordinatesArray[0];
 
     // function to add markers
     const addMarkers = (coordinates, names) => {
+      console.log("current cord:")
+        console.log(coordinates)
       coordinates.forEach((coord, index) => {
         const el = document.createElement('div');
         el.className = 'marker';
@@ -133,6 +137,10 @@ body {
 }
 
 .map-container {
+  height: 100vh; /* Full height */
+}
+
+.map {
   position: absolute;
   top: 0;
   bottom: 0;

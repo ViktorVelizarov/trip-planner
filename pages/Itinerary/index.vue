@@ -1,8 +1,12 @@
 <template>
-  <div class="vacation-itinerary-container">
+  <div class="vacation-itinerary-container  w-full">
     <div class="left-section">
-      <h1 class="text-2xl font-semibold mb-4">{{ `${days} days vacation in ${destination}` }}</h1>
-      <div v-if="itinerary">
+      <div v-if="loadingItinerary" class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading itinerary...</p>
+      </div>
+      <h1 v-else class="text-2xl font-semibold mb-4">{{ `${days} days vacation in ${destination}` }}</h1>
+      <div v-if="!loadingItinerary">
         <ul class="mt-8">
           <li v-for="(day, index) in itinerary" :key="index" class="mb-8">
             <h2 @click="showMap(index)" class="text-lg font-semibold mb-4 cursor-pointer">Day {{ index + 1 }}</h2>
@@ -11,26 +15,29 @@
             </ul>
           </li>
         </ul>
+        <button @click="redirectToSearch" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+          More activities
+        </button>
       </div>
-      <div v-else>
-        <p>Loading...</p>
-      </div>
-      <button @click="redirectToSearch" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
-        More activities
-      </button>
     </div>
 
     <div class="right-section">
-      <MapWithMarkers
-        v-if="showMapComponent && itinerary"
-        :coordinates-array="selectedDayCoordinates"
-        :destination-names="selectedDayNames"
-      />
-      <MapWithMarkersAllDays
-        v-else-if="itinerary"
-        :coordinates-array="allDaysCoordinates"
-        :destination-names="allDaysNames"
-      />
+      <div v-if="loadingMap" class="loading-container">
+        <div class="spinner"></div>
+        <p>Loading map...</p>
+      </div>
+      <div v-else>
+        <MapWithMarkers
+          v-if="showMapComponent && itinerary"
+          :coordinates-array="selectedDayCoordinates"
+          :destination-names="selectedDayNames"
+        />
+        <MapWithMarkersAllDays
+          v-else-if="itinerary"
+          :coordinates-array="allDaysCoordinates"
+          :destination-names="allDaysNames"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -41,7 +48,9 @@ export default {
     return {
       itinerary: null,
       selectedDayIndex: null,
-      showMapComponent: false
+      showMapComponent: false,
+      loadingItinerary: true,
+      loadingMap: true
     };
   },
   computed: {
@@ -99,6 +108,8 @@ export default {
           console.log('Coordinates for Day:', day.coordinates);
           console.log('Names for Day:', day.names);
         });
+
+        this.loadingItinerary = false; // Set loading state to false
       } catch (error) {
         console.error('Error:', error.message);
       }
@@ -117,6 +128,12 @@ export default {
     },
     hideMap() {
       this.showMapComponent = false;
+    },
+    async fetchMapData() {
+      // Simulating map data loading
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulating delay
+
+      this.loadingMap = false; // Set loading state to false after loading
     }
   },
   watch: {
@@ -126,8 +143,9 @@ export default {
       }
     }
   },
-  mounted() {
-    this.fetchItinerary();
+  async mounted() {
+    await this.fetchItinerary(); // Fetch itinerary data
+    await this.fetchMapData(); // Fetch map data after itinerary data is loaded
   }
 };
 </script>
@@ -151,15 +169,31 @@ body {
 
 .right-section {
   width: 50%;
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 100vh;
+  padding-left: 20px; /* Add padding to align with left-section */
+
 }
 
-.map-container {
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   height: 100%;
-  width: 100%;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #7983ff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .marker {

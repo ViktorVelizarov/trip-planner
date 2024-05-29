@@ -7,10 +7,10 @@ export default defineEventHandler(async (event) => {
       const preferencesArray = query.selectedPreferences.split(',');
       const preferencesText = preferencesArray.join(', ');
       promptText += preferencesText;
-      promptText += '. Also at the end of each day can you provide the provide the coordinates [longtitude FIRST,then latitude] for each destination, example: Eiffel Tower [2.2945, 48.8584]. Put the cooridnates in [] and separate them by ,';
+      promptText += '. Also at the end of each day can you provide the provide the coordinates [longtitude FIRST,then latitude] for each destination, example: Eiffel Tower [2.2945, 48.8584]. Put the cooridnates in [] and separate them by ,  .Also Each time you mention a name of a destination with coordinates please repeat that name  and put it in {} brackets after the original name so it looks like this - Aifel Tower {Aifel Tower}. If there are 7 coordinates for the given day I need 7 names of destinations';
     } else {
       promptText += 'No specific preferences';
-      promptText += '. Also at the end of each day can you provide the provide the coordinates [longtitude FIRST,then latitude] for each destination, example: Eiffel Tower [2.2945, 48.8584]. Put the cooridnates in [] and separate them by ,';
+      promptText += '. Also at the end of each day can you provide the provide the coordinates [longtitude FIRST,then latitude] for each destination, example: Eiffel Tower [2.2945, 48.8584]. Put the cooridnates in [] and separate them by ,  .Also Each time you mention a name of a destination with coordinates please repeat that name  and put it in {} brackets after the original name so it looks like this - Aifel Tower {Aifel Tower}. If there are 7 coordinates for the given day I need 7 names of destinations';
     }
     console.log(promptText);
 

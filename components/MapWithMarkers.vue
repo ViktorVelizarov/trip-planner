@@ -13,6 +13,10 @@ export default {
     coordinatesArray: {
       type: Array,
       required: true
+    },
+    destinationNames: {
+      type: Array,
+      required: true
     }
   },
   data() {
@@ -24,7 +28,7 @@ export default {
   mounted() {
     mapboxgl.accessToken = 'pk.eyJ1IjoidmlrdG9ydmVsIiwiYSI6ImNsdmk1aDV5djFjbGMyanFmODNkbG53ZHMifQ.X1lqvNcIbVceNnL6xJAnXA';
     const map = new mapboxgl.Map({
-      container: this.uniqueId,  
+      container: this.uniqueId,
       style: 'mapbox://styles/mapbox/streets-v12',
       center: this.coordinatesArray[0], // Set center as the first coordinate
       zoom: 12
@@ -33,31 +37,30 @@ export default {
     const start = this.coordinatesArray[0];
 
     // function to add markers
-    const addMarkers = (coordinates) => {
+    const addMarkers = (coordinates, names) => {
       coordinates.forEach((coord, index) => {
         const el = document.createElement('div');
         el.className = 'marker';
         el.innerHTML = `<span>${index + 1}</span>`;
-        
+
         new mapboxgl.Marker(el)
           .setLngLat(coord)
           .addTo(map)
-          .setPopup(new mapboxgl.Popup().setHTML(`<h3>${coord[0]}, ${coord[1]}</h3>`));
+          .setPopup(new mapboxgl.Popup().setHTML(`<h3>${names[index]}</h3><p>${coord[1]}, ${coord[0]}</p>`));
       });
     };
 
-    const getRoute = async (ends) => {
-      let routeCoordinates = [];
-      for (const end of ends) {
-        const query = await fetch(
-          `https://api.mapbox.com/directions/v5/mapbox/cycling/${start[0]},${start[1]};${end[0]},${end[1]}?steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`,
-          { method: 'GET' }
-        );
-        const json = await query.json();
-        const data = json.routes[0];
-        routeCoordinates.push(...data.geometry.coordinates);
-      }
-      addMarkers(ends);
+    const getRoute = async (coordinates) => {
+      const coordsString = coordinates.map(coord => `${coord[0]},${coord[1]}`).join(';');
+      const query = await fetch(
+        `https://api.mapbox.com/directions/v5/mapbox/walking/${coordsString}?alternatives=false&continue_straight=true&geometries=geojson&language=en&overview=full&steps=true&access_token=${mapboxgl.accessToken}`,
+        { method: 'GET' }
+      );
+      const json = await query.json();
+      const data = json.routes[0];
+      const routeCoordinates = data.geometry.coordinates;
+
+      addMarkers(coordinates, this.destinationNames);
 
       const geojson = {
         type: 'Feature',
@@ -92,7 +95,7 @@ export default {
     };
 
     map.on('load', () => {
-      getRoute(this.coordinatesArray.slice(0));
+      getRoute(this.coordinatesArray);
 
       map.addLayer({
         id: 'point',

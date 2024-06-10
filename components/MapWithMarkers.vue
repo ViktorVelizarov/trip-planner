@@ -6,7 +6,7 @@
 
 <script>
 import mapboxgl from 'mapbox-gl';
-import '../node_modules/mapbox-gl/dist/mapbox-gl.css';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 export default {
   props: {
@@ -22,12 +22,11 @@ export default {
   data() {
     return {
       uniqueId: 'map-' + Math.random().toString(36).substring(7), // Generate unique ID for map container
-      map: null
+      map: null,
+      loading: false, // Track loading state
     };
   },
   mounted() {
-    console.log("coordinates:")
-    console.log(this.coordinatesArray)
     mapboxgl.accessToken = 'pk.eyJ1IjoidmlrdG9ydmVsIiwiYSI6ImNsdmk1aDV5djFjbGMyanFmODNkbG53ZHMifQ.X1lqvNcIbVceNnL6xJAnXA';
     const map = new mapboxgl.Map({
       container: this.uniqueId,
@@ -38,19 +37,47 @@ export default {
 
     const start = this.coordinatesArray[0];
 
-    // function to add markers
+    // Function to add markers
     const addMarkers = (coordinates, names) => {
-      console.log("current cord:")
-        console.log(coordinates)
       coordinates.forEach((coord, index) => {
         const el = document.createElement('div');
-        el.className = 'marker';
+        el.className = 'marker bg-orange-500 rounded-full w-8 h-8 flex justify-center items-center text-white text-sm font-bold';
         el.innerHTML = `<span>${index + 1}</span>`;
+
+        const popup = new mapboxgl.Popup({
+          closeButton: false, // Hide default close button
+          closeOnClick: false, // Keep open on click
+          anchor: 'bottom' // Anchor to bottom of marker
+        }).setHTML(`<h3>${names[index]}</h3><p>${coord[1]}, ${coord[0]}</p>`);
 
         new mapboxgl.Marker(el)
           .setLngLat(coord)
-          .addTo(map)
-          .setPopup(new mapboxgl.Popup().setHTML(`<h3>${names[index]}</h3><p>${coord[1]}, ${coord[0]}</p>`));
+          .setPopup(popup)
+          .addTo(map);
+
+        el.addEventListener('click', async () => {
+          this.loading = true; // Show loading animation
+
+          const response = await fetch(`/api/GetLocationByName?destination=${encodeURIComponent(names[index])}&lat=${coord[1]}&long=${coord[0]}`);
+          const data = await response.json();
+
+          // Get the first sentence of the description
+          const firstSentence = data.description.split('.')[0];
+
+          // Construct popup content with Tailwind CSS classes
+          const content = `
+            <div class="popup-wrapper rounded-md overflow-hidden">
+              <div class="popup-image-wrapper h-48 bg-cover bg-center" style="background-image: url(${data.imageUrl});"></div>
+              <div class="popup-text p-4 text-black">
+                <h3 class="text-xl font-bold">${data.name}</h3>
+                <p>${firstSentence}</p>
+              </div>
+            </div>
+          `;
+
+          popup.setHTML(content);
+          this.loading = false; // Hide loading animation once loaded
+        });
       });
     };
 
@@ -126,18 +153,15 @@ export default {
         }
       });
     });
+
+    this.map = map; // Store map instance
   }
 };
 </script>
 
-<style>
-body {
-  margin: 0;
-  padding: 0;
-}
-
+<style scoped>
 .map-container {
-  height: 100vh; /* Full height */
+  height: 100vh;
 }
 
 .map {
@@ -147,17 +171,18 @@ body {
   width: 100%;
 }
 
-.marker {
-  background-color: orange;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
+/* Remove .marker styles from here since we're using Tailwind classes */
+.popup-wrapper {
+  width: 300px; /* Set fixed width */
+  height: 300px; /* Set fixed height */
+}
+
+.popup-image-wrapper {
+  height: 50%; /* Adjust height as needed */
+}
+
+.popup-text {
+  height: 50%; /* Adjust height as needed */
+  overflow: hidden; /* Ensure text doesn't overflow */
 }
 </style>

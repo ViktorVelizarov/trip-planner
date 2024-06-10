@@ -50,13 +50,11 @@ export default {
       selectedDayIndex: null,
       showMapComponent: false,
       loadingItinerary: true,
-      loadingMap: true
+      loadingMap: true,
+      days: 0, // Add days property
     };
   },
   computed: {
-    days() {
-      return this.$route.query.days;
-    },
     destination() {
       return this.$route.query.destination;
     },
@@ -79,8 +77,8 @@ export default {
   methods: {
     async fetchItinerary() {
       try {
-        const { days, destination, selectedPreferences } = this.$route.query;
-        const response = await fetch(`http://localhost:3000/api/GetItinerary?days=${days}&destination=${destination}&selectedPreferences=${selectedPreferences}`);
+        const { destination, selectedPreferences } = this.$route.query;
+        const response = await fetch(`http://localhost:3000/api/GetItinerary?days=${this.days}&destination=${destination}&selectedPreferences=${selectedPreferences}`);
         const result = await response.text();
 
         const coordinatesRegex = /\[(.*?)\]/g;
@@ -103,13 +101,12 @@ export default {
           return { activities, coordinates, names };
         });
         
-        // Log coordinates array and names for each day
         this.itinerary.forEach(day => {
           console.log('Coordinates for Day:', day.coordinates);
           console.log('Names for Day:', day.names);
         });
 
-        this.loadingItinerary = false; // Set loading state to false
+        this.loadingItinerary = false;
       } catch (error) {
         console.error('Error:', error.message);
       }
@@ -130,10 +127,8 @@ export default {
       this.showMapComponent = false;
     },
     async fetchMapData() {
-      // Simulating map data loading
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulating delay
-
-      this.loadingMap = false; // Set loading state to false after loading
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      this.loadingMap = false;
     }
   },
   watch: {
@@ -144,8 +139,14 @@ export default {
     }
   },
   async mounted() {
-    await this.fetchItinerary(); // Fetch itinerary data
-    await this.fetchMapData(); // Fetch map data after itinerary data is loaded
+    // Calculate days between selectedStartDate and selectedEndDate
+    const startDate = new Date(this.$route.query.selectedStartDate);
+    const endDate = new Date(this.$route.query.selectedEndDate);
+    const timeDiff = endDate - startDate;
+    this.days = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)) + 1; // Calculate days including both start and end date
+
+    await this.fetchItinerary();
+    await this.fetchMapData();
   }
 };
 </script>
@@ -169,10 +170,8 @@ body {
 
 .right-section {
   width: 50%;
-  padding-left: 20px; /* Add padding to align with left-section */
-
+  padding-left: 20px;
 }
-
 
 .loading-container {
   display: flex;

@@ -1,3 +1,36 @@
+<script setup lang="ts">
+import { ref, watch, defineEmits } from 'vue'
+import {
+  CalendarDate,
+  DateFormatter,
+  getLocalTimeZone,
+} from '@internationalized/date'
+
+import { Calendar as CalendarIcon } from 'lucide-vue-next'
+import type { DateRange } from 'radix-vue'
+import { RangeCalendar } from '@/components/ui/range-calendar'
+import { Button } from '@/components/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
+
+const df = new DateFormatter('en-US', {
+  dateStyle: 'medium',
+})
+
+const value = ref({
+  start: new CalendarDate(2022, 1, 20),
+  end: new CalendarDate(2022, 1, 20).add({ days: 20 }),
+}) as Ref<DateRange>
+
+const emit = defineEmits(['update:selectedDateRange'])
+
+watch(value, (newValue) => {
+  if (newValue.start && newValue.end) {
+    emit('update:selectedDateRange', newValue.start.toDate(getLocalTimeZone()), newValue.end.toDate(getLocalTimeZone()))
+  }
+})
+</script>
+
 <template>
   <Popover>
     <PopoverTrigger as-child>
@@ -24,42 +57,7 @@
       </Button>
     </PopoverTrigger>
     <PopoverContent class="w-auto p-0">
-      <RangeCalendar
-        v-model="value"
-        initial-focus
-        :number-of-months="2"
-        :placeholder="value?.start"
-        @update:start-value="(startDate) => { value.start = startDate; updateSelectedDateRange() }"
-        @update:end-value="(endDate) => { value.end = endDate; updateSelectedDateRange() }"
-      />
+      <RangeCalendar v-model="value" initial-focus :number-of-months="2" />
     </PopoverContent>
   </Popover>
 </template>
-
-<script setup lang="ts">
-import { type Ref, ref, defineProps, defineEmits } from 'vue'
-import { CalendarDate, DateFormatter, getLocalTimeZone } from '@internationalized/date'
-import { Calendar as CalendarIcon } from 'lucide-vue-next'
-import { RangeCalendar } from '@/components/ui/range-calendar'
-import { Button } from '@/components/ui/button'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
-
-const df = new DateFormatter('en-US', {
-  dateStyle: 'medium',
-})
-
-const emits = defineEmits(['update:selectedDateRange'])
-
-const value = ref({
-  start: new CalendarDate(2024, 1, 1),
-  end: new CalendarDate(2024, 1, 1).add({ days: 5 }),
-}) as Ref<{ start: CalendarDate, end: CalendarDate }>
-
-const updateSelectedDateRange = () => {
-  const start = value.value.start;
-  const end = value.value.end;
-
-  emits('update:selectedDateRange', start, end);
-}
-</script>

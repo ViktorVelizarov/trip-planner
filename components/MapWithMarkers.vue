@@ -24,6 +24,7 @@ export default {
       uniqueId: 'map-' + Math.random().toString(36).substring(7), // Generate unique ID for map container
       map: null,
       loading: false, // Track loading state
+      popups: [] // Array to store references to all popups
     };
   },
   mounted() {
@@ -45,10 +46,12 @@ export default {
         el.innerHTML = `<span>${index + 1}</span>`;
 
         const popup = new mapboxgl.Popup({
-          closeButton: false, // Hide default close button
-          closeOnClick: false, // Keep open on click
+          closeButton: true, // Hide default close button
+          closeOnClick: true, // Keep open on click
           anchor: 'bottom' // Anchor to bottom of marker
         }).setHTML(`<h3>${names[index]}</h3><p>${coord[1]}, ${coord[0]}</p>`);
+
+        this.popups.push(popup); // Add popup to the array
 
         new mapboxgl.Marker(el)
           .setLngLat(coord)
@@ -56,6 +59,9 @@ export default {
           .addTo(map);
 
         el.addEventListener('click', async () => {
+           // Close all other popups
+           this.popups.forEach(p => p.remove());
+
           this.loading = true; // Show loading animation
 
           const response = await fetch(`/api/GetLocationByName?destination=${encodeURIComponent(names[index])}&lat=${coord[1]}&long=${coord[0]}`);
@@ -76,7 +82,14 @@ export default {
           `;
 
           popup.setHTML(content);
+          popup.addTo(this.map); // Open the clicked popup
           this.loading = false; // Hide loading animation once loaded
+
+           // Center the map around the popup
+           this.map.flyTo({
+            center: coord,
+            zoom: 15
+          });
         });
       });
     };
@@ -159,9 +172,17 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .map-container {
-  height: 100vh;
+  height: 100vh; /* Half height of the viewport */
+  width: 48vw; /* Half width of the viewport */
+  position: relative; /* Ensure proper positioning */
 }
 
 .map {
@@ -171,18 +192,4 @@ export default {
   width: 100%;
 }
 
-/* Remove .marker styles from here since we're using Tailwind classes */
-.popup-wrapper {
-  width: 300px; /* Set fixed width */
-  height: 300px; /* Set fixed height */
-}
-
-.popup-image-wrapper {
-  height: 50%; /* Adjust height as needed */
-}
-
-.popup-text {
-  height: 50%; /* Adjust height as needed */
-  overflow: hidden; /* Ensure text doesn't overflow */
-}
 </style>

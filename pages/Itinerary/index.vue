@@ -6,7 +6,6 @@
         <p>Loading itinerary...</p>
       </div>
       
-      <!-- New section for displaying fetched destination data -->
       <div v-if="destinationData" class="destination-data">
         <div class="image-container">
           <img :src="destinationData.imageUrl" alt="Destination Image" class="destination-image" />
@@ -33,7 +32,8 @@
             </ul>
           </li>
         </ul>
-        <button @click="redirectToSearch" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+        <!-- Replace redirectToSearch with showModal -->
+        <button @click="showModal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
           More activities
         </button>
       </div>
@@ -57,11 +57,23 @@
         />
       </div>
     </div>
+
+   <!-- Modal component for /searchLocations -->
+  <Modal :isVisible="isModalVisible" title="More activities" @close="isModalVisible = false">
+    <SearchLocations v-model:destination="destination" />
+  </Modal>
   </div>
 </template>
 
 <script>
+import Modal from '@/components/Modal.vue';
+import SearchLocations from '@/components/SearchLocations.vue';
+
 export default {
+  components: {
+    Modal,
+    SearchLocations
+  },
   data() {
     return {
       itinerary: null,
@@ -71,10 +83,12 @@ export default {
       loadingItinerary: true,
       loadingMap: true,
       days: 0,
-      destinationData: null, // New data property for destination data
-      startDate: null, // New data property for start date
-      endDate: null,   // New data property for end date
-      peopleNumber: null, // New data property for number of people
+      destinationData: null,
+      startDate: null,
+      endDate: null,
+      peopleNumber: null,
+      isModalVisible: false, // Add modal visibility flag
+      destination: ''
     };
   },
   computed: {
@@ -91,6 +105,8 @@ export default {
       return this.itinerary && this.selectedDayIndex !== null ? this.itinerary[this.selectedDayIndex].names : [];
     },
     allDaysCoordinates() {
+      console.log("allDaysCoordinates")
+      console.log(this.itinerary ? this.itinerary.map(day => day.coordinates) : [])
       return this.itinerary ? this.itinerary.map(day => day.coordinates) : [];
     },
     allDaysNames() {
@@ -156,8 +172,8 @@ export default {
         console.error('Error:', error.message);
       }
     },
-    redirectToSearch() {
-      this.$router.push({ path: '/searchLocations', query: { destination: this.destination } });
+    showModal() {
+      this.isModalVisible = true;
     },
     showMap(index) {
       if (this.selectedDayIndex === index) {

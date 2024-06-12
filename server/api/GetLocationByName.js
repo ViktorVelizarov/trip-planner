@@ -1,23 +1,27 @@
-
 import fetch from 'node-fetch';
 
 export default defineEventHandler(async (event) => {
   // Extract query parameters
   const { destination, lat, long } = getQuery(event)
 
-  // Check if the required query parameters are provided
-  if (!destination || !lat || !long) {
-    return { error: 'Missing required query parameters: destination, lat, long' };
+  // Check if the required query parameter 'destination' is provided
+  if (!destination) {
+    return { error: 'Missing required query parameter: destination' };
   }
 
-  // Construct the URL with the query parameters
-  const url = `https://api.content.tripadvisor.com/api/v1/location/search?key=${process.env.TRIPADVISOR_API_KEY}&searchQuery=${encodeURIComponent(destination)}&latLong=${encodeURIComponent(lat)},${encodeURIComponent(long)}&language=en`;
-  
+  // Construct the base URL
+  let url = `https://api.content.tripadvisor.com/api/v1/location/search?key=${process.env.TRIPADVISOR_API_KEY}&searchQuery=${encodeURIComponent(destination)}&language=en`;
+
+  // Add lat and long parameters if they are provided
+  if (lat && long) {
+    url += `&latLong=${encodeURIComponent(lat)},${encodeURIComponent(long)}`;
+  }
+
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Referer: 'http://example.com' 
+      Referer: 'http://example.com'
     }
   };
 
@@ -42,8 +46,8 @@ export default defineEventHandler(async (event) => {
       const photosUrl = `https://api.content.tripadvisor.com/api/v1/location/${locationId}/photos?key=${process.env.TRIPADVISOR_API_KEY}&language=en`;
       const photosResponse = await fetch(photosUrl, options);
       const photosData = await photosResponse.json();
-      const imageUrl = photosData.data && photosData.data[0] && photosData.data[0].images && photosData.data[0].images.medium.url
-        ? photosData.data[0].images.medium.url
+      const imageUrl = photosData.data && photosData.data[0] && photosData.data[0].images && photosData.data[0].images.original.url
+        ? photosData.data[0].images.original.url
         : 'No image available';
 
       // Combine the relevant data and return it

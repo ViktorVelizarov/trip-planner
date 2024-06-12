@@ -55,7 +55,6 @@ export default {
           <div class="popup-content">
             
             <h3>${names[index]}</h3>
-            <p>${coord[1]}, ${coord[0]}</p>
           </div>
         `);
 

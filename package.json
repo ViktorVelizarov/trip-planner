@@ -22,6 +22,7 @@
     "node-fetch": "^2.7.0",
     "nuxt": "^3.10.3",
     "nuxt-icon": "^0.6.8",
+    "openai": "^4.0.0",
     "prisma": "^5.10.2",
     "radix-vue": "^1.7.0",
     "shadcn-nuxt": "^0.10.2",

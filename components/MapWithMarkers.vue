@@ -49,7 +49,7 @@ export default {
           closeButton: true, // Hide default close button
           closeOnClick: true, // Keep open on click
           anchor: 'bottom' // Anchor to bottom of marker
-        }).setHTML(`<h3>${names[index]}</h3><p>${coord[1]}, ${coord[0]}</p>`);
+        }).setHTML(`<h3>${names[index]}</h3>`);
 
         this.popups.push(popup); // Add popup to the array
 

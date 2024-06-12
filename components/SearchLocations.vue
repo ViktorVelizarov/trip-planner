@@ -16,6 +16,9 @@
             <img :src="location.rating_image_url" alt="Rating" class="w-16 h-16">
             <p v-if="loading">Loading...</p>
           </div>
+          <button @click="addToItinerary(location)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Add to Itinerary
+          </button>
         </div>
       </div>
     </div>
@@ -24,10 +27,10 @@
   <script>
   export default {
     props: {
-        destination: {
-      type: String,
-      required: true
-    }
+      destination: {
+        type: String,
+        required: true
+      }
     },
     data() {
       return {
@@ -65,16 +68,19 @@
         try {
           const response = await fetch(`/api/GetLocationDetails/${locationId}`);
           const data = await response.json();
-
-          const locationLatitude = data.latitude
-          const locationLongitude = data.longitude
+  
+          const locationLatitude = data.latitude;
+          const locationLongitude = data.longitude;
           
           const description = data.description;
           const ranking_string = data.ranking_data.ranking_string;
           const rating_image_url = data.rating_image_url;
-          this.locations.find((location) => location.location_id === locationId).description = description;
-          this.locations.find((location) => location.location_id === locationId).ranking_string = ranking_string;
-          this.locations.find((location) => location.location_id === locationId).rating_image_url = rating_image_url;
+          const location = this.locations.find(location => location.location_id === locationId);
+          location.description = description;
+          location.ranking_string = ranking_string;
+          location.rating_image_url = rating_image_url;
+          location.latitude = locationLatitude;
+          location.longitude = locationLongitude;
         } catch (error) {
           console.error("Error fetching details for location:", error);
         }
@@ -89,9 +95,9 @@
           return "";
         }
       },
-      async searchDestination() {
-        this.loading = true;
-        await this.fetchLocations();
+      addToItinerary(location) {
+        const { name, description, latitude, longitude } = location;
+        this.$emit('add-location', { name, description, latitude, longitude });
       }
     }
   };

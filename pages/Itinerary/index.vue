@@ -28,11 +28,10 @@
           <li v-for="(day, index) in formattedItinerary" :key="index" class="mb-8">
             <h2 @click="showMap(index)" class="text-lg font-semibold mb-4 cursor-pointer">{{ day.title }}</h2>
             <ul>
-              <li v-for="activity in day.activities" :key="activity" class="ml-4">{{ activity }}</li>
+              <li v-for="activity in day.activities" :key="activity" class="ml-4 mb-1">{{ activity }}</li>
             </ul>
           </li>
         </ul>
-        <!-- Replace redirectToSearch with showModal -->
         <button @click="showModal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
           More activities
         </button>
@@ -58,10 +57,10 @@
       </div>
     </div>
 
-   <!-- Modal component for /searchLocations -->
-  <Modal :isVisible="isModalVisible" title="More activities" @close="isModalVisible = false">
-    <SearchLocations v-model:destination="destination" />
-  </Modal>
+    <!-- Modal component for /searchLocations -->
+    <Modal :isVisible="isModalVisible" title="More activities" @close="isModalVisible = false">
+      <SearchLocations v-model:destination="destination" @add-location="addLocationToItinerary" />
+    </Modal>
   </div>
 </template>
 
@@ -87,7 +86,7 @@ export default {
       startDate: null,
       endDate: null,
       peopleNumber: null,
-      isModalVisible: false, // Add modal visibility flag
+      isModalVisible: false,
       destination: ''
     };
   },
@@ -105,8 +104,6 @@ export default {
       return this.itinerary && this.selectedDayIndex !== null ? this.itinerary[this.selectedDayIndex].names : [];
     },
     allDaysCoordinates() {
-      console.log("allDaysCoordinates")
-      console.log(this.itinerary ? this.itinerary.map(day => day.coordinates) : [])
       return this.itinerary ? this.itinerary.map(day => day.coordinates) : [];
     },
     allDaysNames() {
@@ -125,37 +122,38 @@ export default {
         const { destination, selectedPreferences } = this.$route.query;
         const response = await fetch(`http://localhost:3000/api/GetItinerary?days=${this.days}&destination=${destination}&selectedPreferences=${selectedPreferences}`);
         const result = await response.text();
-        const daysArray = result.split(/Day \d+:/).filter(str => str.trim() !== '');
-
-        this.itinerary = daysArray.map(day => {
-          const coordinatesRegex = /\[(.*?)\]/g;
-          const namesRegex = /\{(.*?)\}/g;
-
-          const coordinateMatches = day.match(coordinatesRegex);
-          const nameMatches = day.match(namesRegex);
-
-          const coordinates = coordinateMatches ? coordinateMatches.map(match => {
-            const [latitude, longitude] = match.replace(/[\[\]]/g, '').split(',').map(parseFloat);
-            return [latitude, longitude];
-          }) : [];
-
-          const names = nameMatches ? nameMatches.map(match => match.replace(/[\{\}]/g, '')) : [];
-          
-          const activities = day.replace(coordinatesRegex, '').replace(namesRegex, '').trim().split('\n').map(activity => activity.trim());
-
-          return { activities, coordinates, names };
-        });
-
-        this.formattedItinerary = this.itinerary.map((day, index) => {
-          const dayTitle = `Day ${index + 1} - ${day.activities[0]}`;
-          const dayActivities = day.activities.slice(1);
-          return { title: dayTitle, activities: dayActivities };
-        });
-
+        this.processItinerary(result);
         this.loadingItinerary = false;
       } catch (error) {
         console.error('Error:', error.message);
       }
+    },
+    processItinerary(result) {
+      const daysArray = result.split(/Day \d+:/).filter(str => str.trim() !== '');
+      this.itinerary = daysArray.map(day => {
+        const coordinatesRegex = /\[(.*?)\]/g;
+        const namesRegex = /\{(.*?)\}/g;
+
+        const coordinateMatches = day.match(coordinatesRegex);
+        const nameMatches = day.match(namesRegex);
+
+        const coordinates = coordinateMatches ? coordinateMatches.map(match => {
+          const [latitude, longitude] = match.replace(/[\[\]]/g, '').split(',').map(parseFloat);
+          return [latitude, longitude];
+        }) : [];
+
+        const names = nameMatches ? nameMatches.map(match => match.replace(/[\{\}]/g, '')) : [];
+        
+        const activities = day.replace(coordinatesRegex, '').replace(namesRegex, '').trim().split('\n').map(activity => activity.trim());
+
+        return { activities, coordinates, names };
+      });
+
+      this.formattedItinerary = this.itinerary.map((day, index) => {
+        const dayTitle = `Day ${index + 1} - ${day.activities[0]}`;
+        const dayActivities = day.activities.slice(1);
+        return { title: dayTitle, activities: dayActivities };
+      });
     },
     async fetchDestinationData() {
       try {
@@ -190,6 +188,42 @@ export default {
     async fetchMapData() {
       await new Promise(resolve => setTimeout(resolve, 2000));
       this.loadingMap = false;
+    },
+    addLocationToItinerary(newLocation) {
+      const newIndex = "added";
+      const formattedLocation = `${newIndex}: ${newLocation.name}`;
+      const formattedDescription = newLocation.description;
+
+      this.itinerary[0].activities.push(formattedLocation);
+      this.itinerary[0].activities.push(formattedDescription);
+      this.itinerary[0].coordinates.push([newLocation.longitude, newLocation.latitude]);
+      this.itinerary[0].names.push(newLocation.name);
+
+      console.log("this.itinerary")
+      console.log(this.itinerary)
+
+      
+
+      this.formattedItinerary = this.itinerary.map((day, index) => {
+        const dayTitle = `Day ${index + 1} - ${day.activities[0]}`;
+        const dayActivities = day.activities.slice(1);
+
+        
+
+
+        return { title: dayTitle, activities: dayActivities };
+      });
+
+      console.log("this.formattedItinerary")
+        console.log(this.formattedItinerary)
+    },
+    logLocationDetails(location) {
+      console.log("Location Details:", {
+        name: location.name,
+        description: location.description,
+        coordinates: [location.latitude, location.longitude]
+      });
+      this.addLocationToItinerary(location);
     }
   },
   watch: {
@@ -201,7 +235,7 @@ export default {
   },
   async mounted() {
     const preferences = this.$route.query.selectedPreferences;
-    this.peopleNumber = this.$route.query.people;
+    this.peopleNumber = this.$route.query.people
     this.startDate = new Date(this.$route.query.selectedStartDate);
     this.endDate = new Date(this.$route.query.selectedEndDate);
     const timeDiff = this.endDate - this.startDate;

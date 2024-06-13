@@ -1,6 +1,7 @@
 <template>
   <div class="container mx-auto px-4 py-8 max-w-xl text-center mt-10  bg-blur-lg bg-white bg-opacity-75 backdrop-filter backdrop-blur-lg backdrop-saturate-150 backdrop-contrast-75 backdrop-brightness-125 backdrop-opacity-50 border-opacity-25 rounded-lg shadow-lg">
-    <h1 class="text-4xl font-semibold mb-8">Plan your next adventure</h1>
+    <h1 class="text-4xl font-bold mb-10">Plan your next adventure</h1>
+    <hr class="mb-5">
     <form @submit.prevent="handleSubmit" class="max-w-md mx-auto">
       <div class="mb-8 text-left">
         <label for="destination" class="block text-lg font-medium text-gray-700 mb-4">What is your destination?</label>

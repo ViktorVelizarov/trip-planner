@@ -121,7 +121,7 @@ export default {
     async fetchItinerary() {
       try {
         const { destination, selectedPreferences } = this.$route.query;
-        const response = await fetch(`http://localhost:3000/api/GetItinerary?days=${this.days}&destination=${destination}&selectedPreferences=${selectedPreferences}`);
+        const response = await fetch(`/api/GetItinerary?days=${this.days}&destination=${destination}&selectedPreferences=${selectedPreferences}`);
         const result = await response.text();
         this.processItinerary(result);
         this.loadingItinerary = false;
@@ -159,7 +159,7 @@ export default {
     async fetchDestinationData() {
       try {
         const { destination } = this.$route.query;
-        const response = await fetch(`http://localhost:3000/api/GetLocationByName?destination=${destination}`);
+        const response = await fetch(`/api/GetLocationByName?destination=${destination}`);
         const data = await response.json();
         
         if (data.error) {

@@ -34,7 +34,6 @@
   },
   "devDependencies": {
     "@nuxtjs/tailwindcss": "^6.11.4",
-    "@sidebase/nuxt-auth": "^0.7.0",
     "typescript": "^5.4.5"
   }
 }

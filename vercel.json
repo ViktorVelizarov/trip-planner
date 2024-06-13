@@ -1,0 +1,7 @@
+{
+    "functions": {
+      "/api/GetItinerary.js": {
+        "maxDuration": 60
+      }
+    }
+  }

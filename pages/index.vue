@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto px-4 py-8 max-w-5xl text-center">
+  <div class="container mx-auto px-4 py-8 max-w-5xl text-center" >
     <h1 class="text-5xl md:text-6xl font-bold mb-6 mt-12">Your Next Journey, Optimized</h1>
     <p class="text-xl md:text-2xl mb-6">
       Build, personalize, and optimize your itineraries with our free AI trip planner. Designed for vacations, workations, and everyday adventures.

@@ -1,11 +1,11 @@
 <template>
-    <div v-if="isVisible" class="modal-overlay" @click.self="closeModal">
-      <div class="modal-container">
+    <div v-if="isVisible" class="modal-overlay " @click.self="closeModal">
+      <div class="modal-container ">
         <div class="modal-header">
-          <h2 class="modal-title">{{ title }}</h2>
+          <h2 class="modal-title"></h2>
           <button class="modal-close" @click="closeModal">&times;</button>
         </div>
-        <div class="modal-content">
+        <div class="modal-content bg-gray-100">
           <slot></slot>
         </div>
       </div>
@@ -61,7 +61,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px;
+    padding: 8px;
     background-color: #f1f1f1;
     border-bottom: 1px solid #ddd;
   }

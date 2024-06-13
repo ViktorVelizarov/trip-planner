@@ -1,5 +1,5 @@
 <template>
-  <div class="vacation-itinerary-container w-full">
+   <div class="vacation-itinerary-container w-full" style="background-image: url('https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkwNC1udW5ueS0wMTdfNC5qcGc.jpg'); background-size: cover; background-position: center;">
     <div class="left-section">
       <div v-if="loadingItinerary" class="loading-container">
         <div class="spinner"></div>
@@ -18,7 +18,7 @@
             </div>
           </div>
         </div>
-        <p class="destination-description">{{ destinationData.description }}</p>
+        <p class="destination-description font-serif">{{ destinationData.description }}</p>
       </div>
 
       <h1 v-else class="text-2xl font-semibold mb-4">{{ `${days} days vacation in ${destination}` }}</h1>
@@ -26,14 +26,15 @@
       <div v-if="!loadingItinerary" class="content-under-image">
         <ul class="mt-8">
           <li v-for="(day, index) in formattedItinerary" :key="index" class="mb-8">
-            <h2 @click="showMap(index)" class="text-lg font-semibold mb-4 cursor-pointer">{{ day.title }}</h2>
+            <hr>
+            <h2 @click="showMap(index)" class="text-xl font-semibold mb-4 cursor-pointer ml-4 mt-5 font-serif">{{ day.title }}</h2>
             <ul>
-              <li v-for="activity in day.activities" :key="activity" class="ml-4 mb-1">{{ activity }}</li>
+              <li v-for="activity in day.activities" :key="activity" class="ml-4 mb-1 font-thin font-serif">{{ activity }}</li>
             </ul>
           </li>
         </ul>
-        <button @click="showModal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
-          More activities
+        <button @click="showModal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 mb-10 ml-4">
+          Add destination
         </button>
       </div>
     </div>
@@ -190,6 +191,9 @@ export default {
       this.loadingMap = false;
     },
     addLocationToItinerary(newLocation) {
+      console.log("newLocation")
+      console.log(newLocation)
+      this.isModalVisible = false;
       const newIndex = "added";
       const formattedLocation = `${newIndex}: ${newLocation.name}`;
       const formattedDescription = newLocation.description;

@@ -1,5 +1,5 @@
 <template>
-   <div class="vacation-itinerary-container w-full" style="background-image: url('https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkwNC1udW5ueS0wMTdfNC5qcGc.jpg'); background-size: cover; background-position: center;">
+  <div class="vacation-itinerary-container w-full" style="background-image: url('https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkwNC1udW5ueS0wMTdfNC5qcGc.jpg'); background-size: cover; background-position: center;">
     <div class="left-section">
       <div v-if="loadingItinerary" class="loading-container">
         <div class="spinner"></div>
@@ -227,6 +227,12 @@ export default {
       if (newValue !== oldValue) {
         this.hideMap();
       }
+    },
+    loadingItinerary(newValue) {
+      console.log("loadingItinerary:", newValue);
+    },
+    loadingMap(newValue) {
+      console.log("loadingMap:", newValue);
     }
   },
   async mounted() {

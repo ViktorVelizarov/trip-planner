@@ -18,7 +18,9 @@
             </div>
           </div>
         </div>
+     
         <p class="destination-description font-serif">{{ destinationData.description }}</p>
+   
       </div>
 
       <h1 v-else class="text-2xl font-semibold mb-4">{{ `${days} days vacation in ${destination}` }}</h1>
@@ -171,6 +173,7 @@ export default {
         console.error('Error:', error.message);
       }
     },
+
     showModal() {
       this.isModalVisible = true;
     },
@@ -191,8 +194,6 @@ export default {
       this.loadingMap = false;
     },
     addLocationToItinerary(newLocation) {
-      console.log("newLocation")
-      console.log(newLocation)
       this.isModalVisible = false;
       const newIndex = "added";
       const formattedLocation = `${newIndex}: ${newLocation.name}`;
@@ -203,18 +204,9 @@ export default {
       this.itinerary[0].coordinates.push([newLocation.longitude, newLocation.latitude]);
       this.itinerary[0].names.push(newLocation.name);
 
-      console.log("this.itinerary")
-      console.log(this.itinerary)
-
-      
-
       this.formattedItinerary = this.itinerary.map((day, index) => {
         const dayTitle = `Day ${index + 1} - ${day.activities[0]}`;
         const dayActivities = day.activities.slice(1);
-
-        
-
-
         return { title: dayTitle, activities: dayActivities };
       });
 

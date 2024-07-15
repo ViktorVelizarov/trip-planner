@@ -1,6 +1,6 @@
 import { defineNitroConfig } from 'nitropack';
  
-// This function can run for a maximum of 5 seconds
+// This function can run for a maximum of 60 seconds
 export default defineNitroConfig({
   vercel: {
     functions: {

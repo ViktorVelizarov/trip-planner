@@ -1,4 +1,5 @@
 <template>
+  <div class="flex-grow" style="background-image: url('https://cdn.vectorstock.com/i/500p/70/79/blue-abstract-watercolor-background-vector-31357079.jpg'); background-size: cover; background-position: center;">
   <div class="container mx-auto px-4 py-8 max-w-5xl text-center" >
     <h1 class="text-5xl md:text-6xl font-bold mb-6 mt-12">Your Next Journey, Optimized</h1>
     <p class="text-xl md:text-2xl mb-6">
@@ -32,6 +33,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>

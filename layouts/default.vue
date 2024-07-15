@@ -10,9 +10,9 @@
         </div>
       </nav>
   
-      <div class="flex-grow" style="background-image: url('https://cdn.vectorstock.com/i/500p/70/79/blue-abstract-watercolor-background-vector-31357079.jpg'); background-size: cover; background-position: center;">
+      
         <slot />
-      </div>
+
   
       <footer class="w-full h-14 border-t backdrop-blur-lg transition-all">
         <div class="flex h-14 items-center justify-center">

@@ -1,5 +1,10 @@
 <template>
   <div class="vacation-itinerary-container w-full" style="background-image: url('https://images.rawpixel.com/image_800/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkwNC1udW5ueS0wMTdfNC5qcGc.jpg'); background-size: cover; background-position: center;">
+    
+    <div v-if="loadingItinerary || loadingMap" class="notification">
+      Notice! The loading animation is broken. Please wait here for around 20 secounds and the vacation plan will show up :>
+    </div>
+    
     <div class="left-section">
       <div v-if="loadingItinerary" class="loading-container">
         <div class="spinner"></div>
@@ -363,5 +368,17 @@ body {
   padding-left: 40px;
   padding-top: 20px;
   margin-top: 10px;
+}
+
+/* Notification style */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  z-index: 1000;
 }
 </style>
